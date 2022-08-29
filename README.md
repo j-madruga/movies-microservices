@@ -1,2 +1,5 @@
 # movies-microservices
-proyect to first exam of DigitalHouse's Backend Specialization II Course
+Primer parcial de materia de especialización Backend II de Digital House
+
+
+
