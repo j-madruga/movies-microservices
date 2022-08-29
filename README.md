@@ -10,6 +10,8 @@ El proyecto consiste en los siguientes microservicios:
 - Catalog Service
 - Movie Service
 
+Las configuraciones provistas por el config-server se encuentran en https://github.com/j-madruga/movies-configs
+
 ![diagrama de arquitectura de microservicios](https://github.com/j-madruga/movies-microservices/blob/main/diagrama-microservicios-primer-parcial.png)
 
 
