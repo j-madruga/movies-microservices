@@ -1,0 +1,36 @@
+# EN CASO DE QUERER LEVANTAR MOVIE-SERVICE SIN CONFIG-SERVER:
+# COMENTAR COMPLETO BOOTSTRAP.YML
+# - DESCOMENTAR COMPLETO APPLICATION.YML
+# - CAMBIAR EL server.port EN APPLICATION.YML
+
+#server:
+#  port: 8082
+#
+#spring:
+#  application:
+#    name: movie-service
+#  cloud:
+#    config:
+#      discovery:
+#        enabled: false
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;
+#    username: sa
+#    password: sa
+#  sql:
+#    init:
+#      data-locations: classpath:movies.sql
+#  jpa:
+#    defer-datasource-initialization: true
+#    hibernate:
+#      ddl-auto: create-drop
+#
+#eureka:
+#  instance:
+#    hostname: localhost
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka

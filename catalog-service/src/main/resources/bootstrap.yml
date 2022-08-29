@@ -1,0 +1,12 @@
+# EN CASO DE QUERER LEVANTAR CATALOG-SERVICE SIN CONFIG-SERVER SEGUIR INSTRUCCIONES DETALLADAS EN APPLICATION.YML
+
+spring:
+  application:
+    name: catalog-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-service
+  profiles:
+    active: dev

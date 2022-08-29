@@ -1,0 +1,14 @@
+# EN CASO DE QUERER LEVANTAR MOVIE-SERVICE SIN CONFIG-SERVER SEGUIR INSTRUCCIONES DETALLADAS EN APPLICATION.YML
+
+spring:
+  application:
+    name: movie-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-service
+  profiles:
+    active: dev
+# EN CASO DE QUERER LEVANTAR UNA 2DA INSTANCIA CAMBIAR profiles.active a prod
+# (existe un movie-service-dev.yml y un movie-service-prod.yml en github)
