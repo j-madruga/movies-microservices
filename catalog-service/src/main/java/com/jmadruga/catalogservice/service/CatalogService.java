@@ -5,6 +5,8 @@ import com.jmadruga.catalogservice.model.DTO.MovieDTO;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ import java.util.Objects;
 @Service
 public class CatalogService {
 	private final MovieFeignClient movieFeignClient;
-
+	private static final Logger LOG = LoggerFactory.getLogger(CatalogService.class);
 	@Autowired
 	public CatalogService(MovieFeignClient movieFeignClient) {
 		this.movieFeignClient = movieFeignClient;
@@ -28,6 +30,7 @@ public class CatalogService {
 	 * @return un catalogDTO
 	 */
 	public CatalogDTO getMovieCatalogByGenre(String genre) {
+		LOG.info("CATALOG-SERVICE :: Se hace la petición a movie-service");
 		ResponseEntity<List<MovieDTO>> moviesResponse = movieFeignClient.getCatalogByGenre(genre);
 		// Imprime por consola los headers con el puerto y custom
 		printHeaders(moviesResponse);
@@ -63,6 +66,7 @@ public class CatalogService {
 	@CircuitBreaker(name = "movie", fallbackMethod = "movieFallbackMethod")
 	@Retry(name = "movie")
 	public CatalogDTO getMovieCatalogByGenreOrThrowError(String genre, Boolean throwError) {
+		LOG.info("CATALOG-SERVICE :: Se hace la petición a movie-service, puede lanzar exception.");
 		ResponseEntity<List<MovieDTO>> moviesResponse = movieFeignClient.getCatalogOrThrowError(genre, throwError);
 		CatalogDTO catalog = new CatalogDTO();
 		// Imprime por consola los headers con el puerto y custom
