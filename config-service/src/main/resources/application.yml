@@ -1,5 +1,6 @@
 server:
   port: 8888
+
 spring:
   application:
     name: config-service
@@ -8,6 +9,10 @@ spring:
       server:
         git:
           uri: https://github.com/j-madruga/movies-configs
+  output:
+    ansi:
+      enabled: ALWAYS
+
 eureka:
   client:
     service-url:

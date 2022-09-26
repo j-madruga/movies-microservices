@@ -8,3 +8,6 @@ spring:
         service-id: config-service
   profiles:
     active: dev
+  output:
+    ansi:
+      enabled: ALWAYS

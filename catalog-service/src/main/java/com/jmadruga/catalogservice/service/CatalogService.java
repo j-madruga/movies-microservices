@@ -4,6 +4,7 @@ import com.jmadruga.catalogservice.model.DTO.CatalogDTO;
 import com.jmadruga.catalogservice.model.DTO.MovieDTO;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,12 +44,14 @@ public class CatalogService {
 	/**
 	 * Imprime el header port y movie-response-header del response de movie-service
 	 *
-	 * @param moviesResponse
+	 * @param moviesResponse respuesta de microservicio movie-service
 	 */
 	private void printHeaders(ResponseEntity<List<MovieDTO>> moviesResponse) {
 		// para ver el puerto del movie-service en la consola de catalog-service
 		List<String> responsePort = moviesResponse.getHeaders().get("port");
-		responsePort.forEach(System.out::println);
+		if (Objects.nonNull(responsePort) && !responsePort.isEmpty()) {
+			responsePort.forEach(System.out::println);
+		}
 	}
 
 	/**
@@ -58,6 +61,7 @@ public class CatalogService {
 	 * @return un catalogDTO
 	 */
 	@CircuitBreaker(name = "movie", fallbackMethod = "movieFallbackMethod")
+	@Retry(name = "movie")
 	public CatalogDTO getMovieCatalogByGenreOrThrowError(String genre, Boolean throwError) {
 		ResponseEntity<List<MovieDTO>> moviesResponse = movieFeignClient.getCatalogOrThrowError(genre, throwError);
 		CatalogDTO catalog = new CatalogDTO();
@@ -72,7 +76,7 @@ public class CatalogService {
 	}
 
 	public CatalogDTO movieFallbackMethod(CallNotPermittedException exception) {
-		System.out.println("CIRCUIT BREAKER :: Se activa  por fallo en :: MOVIE-SERVICE");
+		System.out.println("ERROR :: CIRCUIT BREAKER :: Se activa  por fallo en :: MOVIE-SERVICE");
 		return new CatalogDTO();
 	}
 }
