@@ -10,6 +10,25 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+  mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=finalBack
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+      - MYSQL_ROOT_PASSWORD=pass
+  mongodb:
+    image: mongo
+    container_name: "mongodb"
+    command: mongod --auth
+    environment:
+      - MONGO_INITDB_DATABASE=admin
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+    ports:
+      - "27017:27017"
   eureka-service:
     image: eureka-service
     ports:
@@ -34,4 +53,9 @@ services:
     image: api-gateway
     ports:
       - "8080:8080"
+    restart: always
+  serie-service:
+    image: serie-service
+    ports:
+      - "8095:8095"
     restart: always

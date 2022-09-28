@@ -1,25 +1,33 @@
 package com.jmadruga.catalogservice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jmadruga.catalogservice.model.Catalog;
 import com.jmadruga.catalogservice.model.DTO.CatalogDTO;
 import com.jmadruga.catalogservice.model.DTO.MovieDTO;
+import com.jmadruga.catalogservice.repository.CatalogRepository;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class CatalogService {
+	private final ObjectMapper mapper = new ObjectMapper();
+	private final CatalogRepository catalogRepository;
 	private final MovieFeignClient movieFeignClient;
 	private static final Logger LOG = LoggerFactory.getLogger(CatalogService.class);
 	@Autowired
-	public CatalogService(MovieFeignClient movieFeignClient) {
+	public CatalogService(CatalogRepository catalogRepository, MovieFeignClient movieFeignClient) {
+		this.catalogRepository = catalogRepository;
 		this.movieFeignClient = movieFeignClient;
 	}
 
@@ -77,6 +85,32 @@ public class CatalogService {
 			catalog.setMovies(moviesResponse.getBody());
 		}
 		return catalog;
+	}
+
+
+	@RabbitListener(queues = "${queue.movie.name}")
+	public String saveMovieToCatalog(MovieDTO movie) {
+		LOG.info("Se recibe una movie por RabbitMQ y se la guarda en el Catalog");
+		String response = "Pelicula guardada exitosamente en el catalogo";
+		Optional<Catalog> catalogOptional;
+		Catalog catalog;
+		String genre = movie.getGenre();
+
+		if (movie.getGenre() == null || movie.getGenre().isEmpty() || movie.getGenre().equals(" ")) {
+			response = "es necesario que la pelicula tenga un genero, para poder ser guardada "
+						+ "en el catalogo correspondiente";
+		}
+
+		catalogOptional = catalogRepository.findByGenre(genre);
+
+		if (!catalogOptional.isPresent()) {
+			response = "ha ocurrido un error encontrando el catalogo seleccionado";
+		}
+
+		catalog = catalogOptional.get();
+		catalog.getMovies().add(movie);
+		catalogRepository.save(catalog);
+		return response;
 	}
 
 	public CatalogDTO movieFallbackMethod(CallNotPermittedException exception) {

@@ -44,4 +44,10 @@ public class MovieController {
 				? new ResponseEntity<>(HttpStatus.NOT_FOUND)
 				: new ResponseEntity<>(movies, HttpStatus.OK);
 	}
+
+	@PostMapping("/save-movie")
+	public ResponseEntity<Movie> saveMovie(@RequestBody Movie movie) {
+		Movie savedMovie = this.movieService.saveMovie(movie);
+		return new ResponseEntity<>(savedMovie, HttpStatus.OK);
+	}
 }

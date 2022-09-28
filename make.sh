@@ -23,4 +23,9 @@ mvn clean && mvn package -DskipTests
 docker build . -t api-gateway
 cd ..
 
-docker-compose up
+cd serie-service/
+mvn clean && mvn package -DskipTests
+docker build . -t serie-service
+cd ..
+
+docker compose up
