@@ -1,4 +1,4 @@
-package com.jmadruga.movieservice.config;
+package com.jmadruga.serieservice.config;
 
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
